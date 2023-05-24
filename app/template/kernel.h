@@ -14,7 +14,9 @@
 #include <circle/timer.h>
 #include <circle/logger.h>
 #include <circle/types.h>
+#include <circle/spimaster.h>
 #include <template/myclass.h>
+
 
 enum TShutdownMode
 {
@@ -42,8 +44,10 @@ private:
 	CSerialDevice		m_Serial;
 	CExceptionHandler	m_ExceptionHandler;
 	CInterruptSystem	m_Interrupt;
-	CTimer			m_Timer;
-	CLogger			m_Logger;
+	CTimer				m_Timer;
+	CLogger				m_Logger;
+	CSPIMaster			m_SPIMaster;
+
 
 	// TODO: add more members here
 	CMyClass		m_MyObject;

@@ -71,7 +71,10 @@ boolean CKernel::Initialize (void)
 		if (pTarget == 0)
 		{
 			pTarget = &m_Screen;
+		} else {
+			pTarget = &m_Serial;
 		}
+
 
 		bOK = m_Logger.Initialize (pTarget);
 	}
@@ -102,6 +105,7 @@ boolean CKernel::Initialize (void)
 TShutdownMode CKernel::Run (void)
 {
 	m_Logger.Write (FromKernel, LogNotice, "Compile time: " __DATE__ " " __TIME__);
+	m_Logger.Write (FromKernel, LogNotice, "Hello Display!"); 
 
 #if WIDTH >= 240 && HEIGHT >= 100
 	// draw some text

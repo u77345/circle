@@ -28,11 +28,11 @@ CIRCLEHOME ?= ..
 # set this to 1 to build with clang (experimental)
 CLANG	 ?= 0
 
-AARCH	 ?= 32
-RASPPI	 ?= 1
+AARCH	 ?= 64
+RASPPI	 ?= 3
 
 PREFIX	 ?= arm-none-eabi-
-PREFIX64 ?= aarch64-none-elf-
+PREFIX64 ?= aarch64-elf-
 
 # see: doc/stdlib-support.txt
 ifneq ($(strip $(CLANG)),1)
@@ -133,6 +133,7 @@ CRTEND   = "$(shell $(CPP) $(ARCH) -print-file-name=crtend.o)"
 endif
 else
 CPPFLAGS  += -fno-exceptions -fno-rtti
+#CPPFLAGS  += -fno-rtti
 ifneq ($(strip $(CLANG)),1)
 CPPFLAGS  += -nostdinc++
 endif

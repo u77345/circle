@@ -20,6 +20,7 @@
 #ifndef _kernel_h
 #define _kernel_h
 
+#include <stdint.h>
 #include <circle/actled.h>
 #include <circle/koptions.h>
 #include <circle/devicenameservice.h>
@@ -33,6 +34,11 @@
 #include <circle/types.h>
 #include <display/ili9341.h>
 #include <circle/gpiopin.h>
+#include <circle/gpiomanager.h>
+#include <circle/i2cmaster.h>
+#include <gpio/mcp23017.h>
+#include <sensor/ky040.h>
+#include <utils/myActLED.h>
 
 enum TShutdownMode
 {
@@ -53,7 +59,7 @@ public:
 
 private:
 	// do not change this order
-	CActLED				m_ActLED;
+	myActLED			m_ActLED;
 	CKernelOptions		m_Options;
 	CDeviceNameService	m_DeviceNameService;
 	CScreenDevice		m_Screen;
@@ -64,7 +70,12 @@ private:
 	CLogger				m_Logger;
 
 	CSPIMaster			m_SPIMaster;
+	CI2CMaster			m_I2CMaster;
 	CILI9341Display		m_Display;
+	CGPIOManager		m_GPIOManager;
+	mcp23017 			m_GPIOExtender;
+
+	static void EventHandler (uint8_t event, void *pParam);
 
 };
 

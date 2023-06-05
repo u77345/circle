@@ -55,7 +55,10 @@ boolean CKernel::Initialize (void)
 		if (pTarget == 0)
 		{
 			pTarget = &m_Screen;
+		} else {
+			pTarget = &m_Serial;
 		}
+
 
 		bOK = m_Logger.Initialize (pTarget);
 	}

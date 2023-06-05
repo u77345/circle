@@ -1,5 +1,10 @@
 cd ../..
+make clean
 make
-cd sample/i*
+cd ../gpio
+make clean
+make
+cd ../display/sample/ili9341
+make clean 
 make
 

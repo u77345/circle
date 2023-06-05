@@ -4,9 +4,11 @@
 
 CIRCLEHOME = ../..
 
-OBJS	= rtkgpio.o mcp23017.o
+OBJS	= \
+    myUtils.o \
+	miniuart.o \
 
-libgpio.a: $(OBJS)
+lib_my_utils.a : $(OBJS)
 	@echo "  AR    $@"
 	@rm -f $@
 	@$(AR) cr $@ $(OBJS)

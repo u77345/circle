@@ -19,6 +19,8 @@
 //
 #include <circle/sound/wm8960soundcontroller.h>
 #include <assert.h>
+#include <circle/logger.h>
+
 
 CWM8960SoundController::CWM8960SoundController (CI2CMaster *pI2CMaster, u8 uchI2CAddress)
 :	m_pI2CMaster (pI2CMaster),
@@ -28,6 +30,13 @@ CWM8960SoundController::CWM8960SoundController (CI2CMaster *pI2CMaster, u8 uchI2
 
 boolean CWM8960SoundController::Probe (void)
 {
+	uint8_t reg04 = readRegister(0x1A, 0x04);
+	CLogger::Get ()->Write ("WM8960", LogWarning, "Reg04 returned %d", reg04);
+
+	if (reg04 != 0) {
+		return FALSE;
+	}
+
 	if (m_uchI2CAddress)
 	{
 		return InitWM8960 (m_uchI2CAddress);
@@ -106,4 +115,35 @@ boolean CWM8960SoundController::InitWM8960 (u8 uchI2CAddress)
 	}
 
 	return TRUE;
+}
+
+uint8_t CWM8960SoundController::readRegister(uint8_t slaveAddr, uint8_t regAddr) 
+{
+    assert (m_pI2CMaster != 0);
+    m_pI2CMaster->SetClock (100000);
+	if (m_pI2CMaster->Write (slaveAddr, 0, 0) != 0)
+	{
+		CLogger::Get ()->Write ("WM8960", LogError, "Device is not present (addr 0x%02X)",
+					(unsigned) slaveAddr);
+		return -1;
+	} 
+
+    int nResult = m_pI2CMaster->Write (slaveAddr, &regAddr, sizeof regAddr);
+    if (nResult != sizeof regAddr)
+	{
+		CLogger::Get ()->Write ("WM8960", LogWarning,
+					"I2C write failed (err %d)", nResult);
+		return -1;
+	}
+
+    uint8_t pBuffer[1];
+	nResult = m_pI2CMaster->Read (slaveAddr, pBuffer, 1);
+
+	if (nResult != 1)
+	{
+		CLogger::Get ()->Write ("WM8960", LogWarning,
+					"I2C read failed (err %d)", nResult);
+		return -1;
+	} 
+	return pBuffer[0];
 }

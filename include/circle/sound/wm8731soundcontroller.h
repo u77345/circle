@@ -1,5 +1,5 @@
 //
-// wm8960soundcontroller.h
+// WM8731soundcontroller.h
 //
 // Circle - A C++ bare metal environment for Raspberry Pi
 // Copyright (C) 2022  R. Stange <rsta2@o2online.de>
@@ -17,19 +17,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef _circle_sound_wm8960soundcontroller_h
-#define _circle_sound_wm8960soundcontroller_h
+#ifndef _circle_sound_WM8731soundcontroller_h
+#define _circle_sound_WM8731soundcontroller_h
 
 #include <circle/sound/soundcontroller.h>
 #include <circle/i2cmaster.h>
 #include <circle/types.h>
-#include <stdint.h>
 
-
-class CWM8960SoundController : public CSoundController		/// Sound controller for WM8960
+class CWM8731SoundController : public CSoundController		/// Sound controller for WM8731
 {
 public:
-	CWM8960SoundController (CI2CMaster *pI2CMaster, u8 uchI2CAddress = 0);
+	CWM8731SoundController (CI2CMaster *pI2CMaster, u8 uchI2CAddress = 0);
 
 	boolean Probe (void) override;
 
@@ -39,8 +37,7 @@ public:
 	}
 
 private:
-	boolean InitWM8960 (u8 uchI2CAddress);
-	uint8_t readRegister(uint8_t slaveAddr, uint8_t regAddr);
+	boolean InitWM8731 (u8 uchI2CAddress);
 
 private:
 	CI2CMaster *m_pI2CMaster;

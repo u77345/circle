@@ -24,9 +24,10 @@ all: libsound.a
 
 include $(CIRCLEHOME)/Rules.mk
 
-OBJS	= dmasoundbuffers.o hdmisoundbasedevice.o i2ssoundbasedevice.o \
-	  pwmsoundbasedevice.o pwmsounddevice.o soundbasedevice.o \
-	  pcm512xsoundcontroller.o wm8960soundcontroller.o
+OBJS = i2ssoundbasedevice.o dmasoundbuffers.o \
+hdmisoundbasedevice.o \
+pwmsoundbasedevice.o pwmsounddevice.o soundbasedevice.o \
+pcm512xsoundcontroller.o wm8960soundcontroller.o wm8731soundcontroller.o
 
 ifeq ($(strip $(RASPPI)),4)
 OBJS	+= usbsoundbasedevice.o usbsoundcontroller.o

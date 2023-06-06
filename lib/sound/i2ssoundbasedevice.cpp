@@ -5,11 +5,11 @@
 //	BCM283x/BCM2711 I2S output and input
 //	two 24-bit audio channels
 //	sample rate up to 192 KHz
-//	output tested with PCM5102A, PCM5122 and WM8960 DACs
+//	output tested with PCM5102A, PCM5122, WM8960 and WM8731 DACs
 //
 // References:
 //	https://www.raspberrypi.org/forums/viewtopic.php?f=44&t=8496
-//
+// 
 // Circle - A C++ bare metal environment for Raspberry Pi
 // Copyright (C) 2016-2022  R. Stange <rsta2@o2online.de>
 //
@@ -33,9 +33,12 @@
 #include <circle/memio.h>
 #include <circle/timer.h>
 #include <assert.h>
+#include <circle/i2cmaster.h>
+
 
 #define CHANS			2			// 2 I2S stereo channels
 #define CHANLEN			32			// width of a channel slot in bits
+
 
 //
 // PCM / I2S registers
@@ -133,6 +136,7 @@ CI2SSoundBaseDevice::CI2SSoundBaseDevice (CInterruptSystem *pInterrupt,
 	RunI2S ();
 
 	CDeviceNameService::Get ()->AddDevice ("sndi2s", this, FALSE);
+	CLogger::Get ()->Write ("I2S sounddev", LogNotice, "sndi2s registered");
 }
 
 CI2SSoundBaseDevice::~CI2SSoundBaseDevice (void)
@@ -158,8 +162,10 @@ int CI2SSoundBaseDevice::GetRangeMax (void) const
 
 boolean CI2SSoundBaseDevice::Start (void)
 {
+	CLogger::Get ()->Write ("I2S sounddev", LogNotice, "enter Start");
 	if (m_bError)
 	{
+		CLogger::Get ()->Write ("I2S sounddev", LogNotice, "early bailout on error");
 		return FALSE;
 	}
 
@@ -168,10 +174,10 @@ boolean CI2SSoundBaseDevice::Start (void)
 		if (!ControllerFactory ())
 		{
 			m_bError = TRUE;
-
+			CLogger::Get ()->Write ("I2S sounddev", LogNotice, "error initiating controller");
 			return FALSE;
 		}
-
+		CLogger::Get ()->Write ("I2S sounddev", LogNotice, "controller initiated");
 		m_bControllerInited = TRUE;
 	}
 
@@ -420,6 +426,7 @@ unsigned CI2SSoundBaseDevice::RXCompletedHandler (boolean bStatus, u32 *pBuffer,
 
 #include <circle/sound/pcm512xsoundcontroller.h>
 #include <circle/sound/wm8960soundcontroller.h>
+#include <circle/sound/wm8731soundcontroller.h>
 
 boolean CI2SSoundBaseDevice::ControllerFactory (void)
 {
@@ -434,6 +441,7 @@ boolean CI2SSoundBaseDevice::ControllerFactory (void)
 
 	if (m_pController->Probe ())
 	{
+		CLogger::Get ()->Write ("I2S sounddev", LogNotice, "PCM512x returns true");
 		return TRUE;
 	}
 
@@ -446,11 +454,23 @@ boolean CI2SSoundBaseDevice::ControllerFactory (void)
 
 	if (m_pController->Probe ())
 	{
+		CLogger::Get ()->Write ("I2S sounddev", LogNotice, "WM8960 returns true");
+		return TRUE;
+	}
+
+	// WM8731
+	m_pController = new CWM8731SoundController (m_pI2CMaster, m_ucI2CAddress);
+	assert (m_pController);
+
+	if (m_pController->Probe ())
+	{
+		CLogger::Get ()->Write ("I2S sounddev", LogNotice, "WM8731 returns true");
 		return TRUE;
 	}
 
 	delete m_pController;
 	m_pController = nullptr;
 
+	CLogger::Get ()->Write ("I2S sounddev", LogNotice, "Final probe exit");
 	return !m_ucI2CAddress;		// PCM5102A does not need a controller
 }

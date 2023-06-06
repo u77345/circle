@@ -4,6 +4,7 @@
         "*.tcc": "cpp",
         "__locale": "cpp",
         "cstdint": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "ostream": "cpp"
     }
 }
